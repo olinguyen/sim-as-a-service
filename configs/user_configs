@@ -1,0 +1,71 @@
+DEFAULT
+=======
+OUTPUT_FILE = "sim.out"
+
+enable_area_modeling = true
+enable_shared_mem = true
+
+mode = full
+
+trigger_models_within_application = false
+
+log:enabled = true
+?log:stack_trace = true
+log:disabled_modules = ""
+log:enabled_modules  = ""
+
+progress_trace:enabled = true
+interval = 5000
+
+NO TOUCH: clock_skew_mana, stack
+
+[runtime_energy_modeling]
+interval = 1000
+[runtime_energy_modeling/power_trace]
+enabled = false/true?
+
+dvfs: domains, sync_delay as is.
+tile: model_list
+core: iocoom
+
+queue model dram as is.
+
+stats trace.
+
+BASIC
+======
+total_cores = 2^n, where n = 0, 1, 2, 3, ...
+
+enable_core_modeling = true/false
+enable_power_modeling = true/false
+
+technology_node (22, 32, 45) if both true.
+                (11, 22, 32, 45) if power only
+		(22, 32, 45, 65, 90) if core only
+
+?max_frequency in GHz, float
+
+# Global temp setting in Kelvin [C or F]
+temperature = 300
+
+tile_width = 1 mm (area of a given core)
+
+ALL "NETWORK" TO SPECIFY !!! user, memory.
+
+ADVANCED
+=========
+
+static_instruction_costs, branch_predictor
+l1_i/dcache values + l2
+
+caching_protocol: type SHIT
+l2_dir & dram_dir
+
+software_trap_penalty
+
+dram: latency and bandwidth
+
+link and laser models.
+
+MAYBE A VALUE IN BETWEEN !!!
+
