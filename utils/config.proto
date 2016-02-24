@@ -1,0 +1,18 @@
+package config;
+
+message Config {
+  optional string option = 1 [default = "sim.out"];
+  optional int32 total_cores = 2 [default = 64];
+  optional int32 num_processes = 3 [default = 1];
+  required bool enable_core_modeling = 4;
+  required bool enable_power_modeling = 5;
+  optional bool enable_area_modeling = 6 [default = true];
+  optional bool enable_shared_mem = 7 [default = true];
+
+  enum SimulatorMode {
+    full = 0;
+    lite = 1;
+  }
+
+  optional SimulatorMode mode = 8 [default = full];
+}
