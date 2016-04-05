@@ -16,7 +16,7 @@ settings = dict(
 
 application = tornado.web.Application([
     (r"/", JobHandler),
-    ])
+])
 
 if __name__ == "__main__":
     print("[Simulator] Server running...")

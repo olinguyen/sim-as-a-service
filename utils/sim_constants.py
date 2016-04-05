@@ -8,3 +8,4 @@ HELLOWORLD = "hello_world_app_test"
 RUNNING_SIM_FLAG = GRAPHITE_HOME + "tools/running_sim"
 
 CONFIG_PATH = "/root/sim-as-a-service/configs/"
+SPAWN_APP = "/root/sim-as-a-service/utils/spawn.py"

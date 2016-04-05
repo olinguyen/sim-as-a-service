@@ -73,9 +73,6 @@ config.set('dram', 'latency', '100')
 config.set('dram', 'per_controller_bandwidth', '5')              
 config.set('dram', 'num_controllers', 'ALL')
 
-config.set('dram/queue_model', 'enabled', 'true')
-config.set('dram/queue_model', 'type', 'history_tree')
-
 config.set('network', 'user', 'atac')
 config.set('network', 'memory', 'atac')
 
