@@ -10,21 +10,13 @@ import glob
 import shutil
 from sim_constants import *
 from tornado import gen, httpclient, ioloop
+import httplib
 import urllib
+import requests
+import json
+from parse_output import *
 
-destination = 'http://104.200.30.65:5000'
-http_client = httpclient.AsyncHTTPClient()
-
-@gen.coroutine
-def post():
-    with open('/root/sim-as-a-service/test.txt') as f:
-        for line in f:
-            request = httpclient.HTTPRequest(destination,
-                                             body=line,
-                                             method="POST")
-
-            response = yield http_client.fetch(request)
-            print response
+destination = 'http://45.79.178.142:8889/results'
 
 # get GRAPHITE_HOME from environment variable, or use pwd
 def get_graphite_home():
@@ -35,11 +27,23 @@ def get_graphite_home():
 
     return graphite_home
 
-def handle_sim_request(config, app):
+def handle_sim_request(app, email):
+    print "Starting jobs"
     os.system("touch %s" % RUNNING_SIM_FLAG)
     while True:
+        shutil.copyfile(GRAPHITE_HOME + 'carbon_sim.cfg', \
+                    CONFIG_PATH + 'carbon_sim.cfg')
         spawn_sim_job(app)
         # Send results back to controller
+        data = generate_output_dict()
+
+        # Send post request to controller
+        headers = {"Content-type": "application/json", "Accept": "text/plain"}
+        response = requests.post(destination, data=json.dumps(data), \
+                                 headers=headers)
+
+        # Email user that simulation finished
+        send_simple_message(email)
 
         num_jobs_queued = len(os.listdir(CONFIG_PATH))
         if num_jobs_queued == 0:
@@ -48,11 +52,6 @@ def handle_sim_request(config, app):
             # Move next file in the queue
             newest = max(glob.iglob(CONFIG_PATH + '*.cfg'), key=os.path.getctime)
             shutil.move(newest, GRAPHITE_HOME + 'carbon_sim.cfg')
-
-    #ioloop.IOLoop.current().run_sync(post)
-    #post_data = {'data': 'test data'}
-    #body = urllib.urlencode(post_data)
-    #http_client.fetch(destination, handle_request,
 
     os.remove(RUNNING_SIM_FLAG)
     print "Job done!"
@@ -64,11 +63,25 @@ def spawn_sim_job(app):
         command = "make %s" % CHOLESKY
     elif app == "barnes":
         command = "make %s" % BARNES
-    elif app == "helloworld":
-        command = "make %s" % HELLOWORLD
+    elif app == "ping_pong":
+        command = "make %s" % PINGPONG
+    elif app == "fft":
+        command = "make %s" % FFT
     else:
         print "Could not find specified test to run"
     os.system(command)
 
+def send_simple_message(email):
+    return requests.post(
+        "https://api.mailgun.net/v3/sandbox0b783b0de07744d29f52597d3423ebfc.mailgun.org/messages",
+        auth=("api", "key-ab35a192ec8788bf2d0678d2a996304f"),
+        files=[("attachment", open(SIM_OUTPUT_PATH + '/sim.out'))],
+        data={"from": "Mailgun Sandbox <postmaster@sandbox0b783b0de07744d29f52597d3423ebfc.mailgun.org>",
+              "to": "COEN498 <%s>" % email,
+              "subject": "Simulation Complete!",
+              "text": "Hello, \n\nYour simulation has just completed. Here are the results!\n\nHave a nice day!"})
+
 if __name__ == "__main__":
-    handle_sim_request(None, "cholesky")
+    app_name = sys.argv[1] 
+    email = sys.argv[2] 
+    handle_sim_request(app_name, email)

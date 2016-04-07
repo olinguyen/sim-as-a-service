@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Sim as a Service</title>
+
+        <link rel="shortcut icon" href="{{ static_url("img/favicon.ico") }}"/>
+
+        <link rel="stylesheet" href="{{ static_url("css/main.css") }}">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/united/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui.min.css") }}">
+    </head>
+
+    <body>
+
+    <div class="container-fluid">
+        {% if section == 'system' %}
+            {% module Template("system.html")%}
+        {% elif section == 'queue' %}
+            {% module Template("queue.html")%}
+        {% end %}
+    </div>
+
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.js") }}"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/united/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/smoothie/smoothie.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("js/app.js") }}"></script>
+    </body>
+</html>
