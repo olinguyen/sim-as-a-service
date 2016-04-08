@@ -17,5 +17,4 @@ class QueueHandler(tornado.web.RequestHandler):
 
         files_q = list(sorted(files_q, key=lambda k: k['time']))
 
-        print(files_q)
         self.render('queue.html', configs=files_q)

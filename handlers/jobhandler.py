@@ -6,6 +6,7 @@ import subprocess
 from sim_constants import *
 import os
 import json
+import time
 
 from config import setupConfigFile
 
@@ -17,10 +18,9 @@ class JobHandler(web.RequestHandler):
         try:
             data = json.loads(self.request.body)
             app_name = data['app']
-            email = "nguyenolive@gmail.com"
-            #email = data['email']
-            #print(data)
-            #self.write(data)
+            email = data['email']
+            num_cores = data['total_cores']
+            self.log_history(app_name, num_cores, email)
         except ValueError:
             pass
 
@@ -42,3 +42,8 @@ class JobHandler(web.RequestHandler):
           "message": "job has been succesfully started"
         })
         self.finish()
+
+    def log_history(self, app_name, num_cores, email):
+        with open(HISTORY_LOG, "a") as f:
+            f.write("%s %s %s %d\n" % (app_name, num_cores, email, int(time.time())))
+

@@ -13,3 +13,5 @@ SIM_OUTPUT_PATH = GRAPHITE_HOME + 'results/latest'
 
 CONFIG_PATH = "/root/sim-as-a-service/configs/"
 SPAWN_APP = "/root/sim-as-a-service/utils/spawn.py"
+HISTORY_LOG = "/root/sim-as-a-service/utils/history.log"
+SIM_HIST_PATH = "/root/sim-as-a-service/sim_output_history/"

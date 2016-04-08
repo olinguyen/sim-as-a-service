@@ -6,10 +6,13 @@ import sys
 
 sys.path.insert(0, os.path.join(os.getcwd(), "handlers"))
 
-from jobhandler       import JobHandler
-from systemhandler    import SystemHandler
-from sysdatahandler   import SysdataHandler
-from queuehandler     import QueueHandler
+from jobhandler         import JobHandler
+from systemhandler      import SystemHandler
+from sysdatahandler     import SysdataHandler
+from queuehandler       import QueueHandler
+from jobapihandler      import JobApiHandler
+from resultsapihandler  import ResultsApiHandler
+
 
 settings = dict(
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -22,6 +25,8 @@ application = tornado.web.Application([
     (r"/system", SystemHandler),
     (r"/sysdata", SysdataHandler),
     (r"/queue", QueueHandler),
+    (r"/jobs", JobApiHandler),
+    (r"/results", ResultsApiHandler),
 # static cfg files handlers
     (r"/(.*)", tornado.web.StaticFileHandler, {'path': '/root/sim-as-a-service/configs/'}),
 ], **settings)

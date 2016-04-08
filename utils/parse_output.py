@@ -4,6 +4,7 @@ import re
 import sys
 from optparse import OptionParser
 from sim_constants import *
+import time
 
 global output_file_contents
 global num_cores
@@ -76,7 +77,6 @@ def generate_output_dict():
 
     print "Parsing simulation output file: %s/sim.out" % (SIM_OUTPUT_PATH)
     num_cores = 4
-
     # Total Instructions
     target_instructions = rowSearch1("Core Summary", "Total Instructions")
 
@@ -134,6 +134,7 @@ def generate_output_dict():
       "total_bits_received": total_bits_received,
       "avg_packet_latency": avg_packet_latency,
       "total_dram_accesses": total_dram_accesses,
-      "avg_dram_latency": avg_dram_latency
+      "avg_dram_latency": avg_dram_latency,
+      "creation_time": int(time.time())
     }
     return data

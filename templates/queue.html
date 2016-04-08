@@ -52,11 +52,7 @@
     <center>
     <ul id="list_queues">
         {% for job in configs %}
-            {% if job['name'] == 'carbon_sim.cfg' %}
-                <li><a href="{{job['name']}}">{{job['name']}} - {{job['time']}} - running</li>
-            {% else %}
-                <li><a href="{{job['name']}}">{{job['name']}} - {{job['time']}} - Waiting</li>
-            {% end %}
+                <li><a href="{{job['name']}}">{{job['name']}} - {{job['time']}}</li>
         {% end %}
     </ul>
     </center>

@@ -31,8 +31,6 @@ def handle_sim_request(app, email):
     print "Starting jobs"
     os.system("touch %s" % RUNNING_SIM_FLAG)
     while True:
-        shutil.copyfile(GRAPHITE_HOME + 'carbon_sim.cfg', \
-                    CONFIG_PATH + 'carbon_sim.cfg')
         spawn_sim_job(app)
         # Send results back to controller
         data = generate_output_dict()
@@ -45,16 +43,22 @@ def handle_sim_request(app, email):
         # Email user that simulation finished
         send_simple_message(email)
 
+        # Save sim.out
+        save_output(app, email)
+
         num_jobs_queued = len(os.listdir(CONFIG_PATH))
         if num_jobs_queued == 0:
             break
         else:
             # Move next file in the queue
-            newest = max(glob.iglob(CONFIG_PATH + '*.cfg'), key=os.path.getctime)
-            shutil.move(newest, GRAPHITE_HOME + 'carbon_sim.cfg')
+            oldest = min(glob.iglob(CONFIG_PATH + '*.cfg'), key=os.path.getctime)
+            shutil.move(oldest, GRAPHITE_HOME + 'carbon_sim.cfg')
 
     os.remove(RUNNING_SIM_FLAG)
     print "Job done!"
+
+def save_output(app_name, email):
+    shutil.copyfile(SIM_OUTPUT_PATH + '/sim.out', SIM_HIST_PATH + 'sim-%s-%s-%d-.out' % (app_name, email, int(time.time())))
 
 def spawn_sim_job(app):
     graphite_dir = get_graphite_home()
@@ -75,13 +79,14 @@ def send_simple_message(email):
     return requests.post(
         "https://api.mailgun.net/v3/sandbox0b783b0de07744d29f52597d3423ebfc.mailgun.org/messages",
         auth=("api", "key-ab35a192ec8788bf2d0678d2a996304f"),
-        files=[("attachment", open(SIM_OUTPUT_PATH + '/sim.out'))],
+        files=[("attachment", open(SIM_OUTPUT_PATH + '/sim.out')), \
+               ("attachment", open(SIM_OUTPUT_PATH + '/carbon_sim.cfg'))],
         data={"from": "Mailgun Sandbox <postmaster@sandbox0b783b0de07744d29f52597d3423ebfc.mailgun.org>",
               "to": "COEN498 <%s>" % email,
               "subject": "Simulation Complete!",
               "text": "Hello, \n\nYour simulation has just completed. Here are the results!\n\nHave a nice day!"})
 
 if __name__ == "__main__":
-    app_name = sys.argv[1] 
-    email = sys.argv[2] 
+    app_name = sys.argv[1]
+    email = sys.argv[2]
     handle_sim_request(app_name, email)
